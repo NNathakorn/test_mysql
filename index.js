@@ -11,13 +11,21 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // ตั้งค่าการเชื่อมต่อ MySQL
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'test_mysql',
-  port: '3306'
+const pool = mysql.createPool({
+    host: process.env.DB_HOST, 
+    user: process.env.DB_USERNAME, 
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DBNAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
+
+pool.getConnection((err, conn) => {
+    if(err) console.log(err)
+    console.log("Connected successfully")
+})
+
 
 // เชื่อมต่อกับ MySQL
 connection.connect((err) => {
